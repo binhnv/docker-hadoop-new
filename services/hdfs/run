@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+. /etc/container_environment.sh
+
+function on_exit {
+    ${HADOOP_PREFIX}/sbin/stop-dfs.sh
+    exit
+}
+trap on_exit INT TERM HUP
+
+# this and wait for SSH server up and running
+sv start sshd || exit 1
+while true; do
+    dockerize -wait tcp://localhost:22 -timeout 2s
+    if [[ $? -eq 0 ]]; then
+        break
+    fi
+done
+
+su ${HADOOP_HDFS_USER} --preserve-environment -c "${HADOOP_PREFIX}/sbin/start-dfs.sh"
+if [ -n "${HADOOP_SECURE_DN_USER}" ]; then
+    ${HADOOP_PREFIX}/sbin/start-secure-dns.sh
+fi
+
+while true; do
+    sleep infinity &
+    wait
+done

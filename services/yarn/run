@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+. /etc/container_environment.sh
+
+function on_exit {
+    ${HADOOP_PREFIX}/sbin/stop-yarn.sh
+    exit
+}
+trap on_exit INT TERM HUP
+
+# this and wait for SSH server up and running
+sv start sshd || exit 1
+while true; do
+    dockerize -wait tcp://localhost:22 -timeout 2s
+    if [[ $? -eq 0 ]]; then
+        break
+    fi
+done
+
+su ${HADOOP_YARN_USER} --preserve-environment -c ${HADOOP_PREFIX}/sbin/start-yarn.sh
+
+while true; do
+    sleep infinity &
+    wait
+done
