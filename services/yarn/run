@@ -4,7 +4,7 @@
 
 function on_exit {
     ${HADOOP_PREFIX}/sbin/stop-yarn.sh
-    exit
+    exit 0
 }
 trap on_exit INT TERM HUP
 
@@ -17,9 +17,10 @@ while true; do
     fi
 done
 
+# Wait for Kerberos service
+my_service "wait" ${KRB_SERVICE_NAME}
+
 su ${HADOOP_YARN_USER} --preserve-environment -c ${HADOOP_PREFIX}/sbin/start-yarn.sh
 
-while true; do
-    sleep infinity &
-    wait
-done
+sleep infinity &
+wait $!

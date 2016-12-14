@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-/sbin/my_wait_for_file ${KRB_SERVICE_KEYTAB_FILE}
+my_service "unregister" ${HD_SERVICE_NAME}
 su ${HADOOP_HDFS_USER} --preserve-environment -c "${HADOOP_PREFIX}/bin/hdfs namenode -format -force"

@@ -8,7 +8,7 @@ examples_jar="${HADOOP_COMMON_HOME}/share/hadoop/mapreduce/hadoop-mapreduce-exam
 
 echo "hello world" > ${local_file}
 
-kinit -kt ${KRB_KEYTAB_DIR}/${MY_USER.keytab ${MY_USER}
+kinit -kt ${KRB_KEYTAB_DIR}/${MY_USER}.keytab ${MY_USER}
 ${HADOOP_COMMON_HOME}/bin/hadoop fs -mkdir -p ${in_dir} \
     && ${HADOOP_COMMON_HOME}/bin/hadoop fs -put -f ${local_file} ${in_dir} \
     && ${HADOOP_COMMON_HOME}/bin/hadoop fs -rm -r -f ${out_dir} \

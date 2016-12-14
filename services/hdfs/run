@@ -4,7 +4,7 @@
 
 function on_exit {
     ${HADOOP_PREFIX}/sbin/stop-dfs.sh
-    exit
+    exit 0
 }
 trap on_exit INT TERM HUP
 
@@ -17,12 +17,13 @@ while true; do
     fi
 done
 
+# Wait for Kerberos service
+my_service "wait" ${KRB_SERVICE_NAME}
+
 su ${HADOOP_HDFS_USER} --preserve-environment -c "${HADOOP_PREFIX}/sbin/start-dfs.sh"
 if [ -n "${HADOOP_SECURE_DN_USER}" ]; then
     ${HADOOP_PREFIX}/sbin/start-secure-dns.sh
 fi
 
-while true; do
-    sleep infinity &
-    wait
-done
+sleep infinity &
+wait $1
