@@ -8,15 +8,10 @@ function on_exit {
 }
 trap on_exit INT TERM HUP
 
-# this and wait for SSH server up and running
+# start ssh service
 sv start sshd || exit 1
-while true; do
-    dockerize -wait tcp://localhost:22 -timeout 2s
-    if [[ $? -eq 0 ]]; then
-        break
-    fi
-done
-
+# wait for ssh service ready
+my_tcp_wait '127.0.0.1' 22
 # Wait for Kerberos service
 my_service "wait" ${KRB_SERVICE_NAME}
 

@@ -6,15 +6,6 @@ g_nn_host="${HD_NAMENODE_HOSTNAME}"
 hadoop="${HADOOP_PREFIX}/bin/hadoop"
 kinit -kt ${KRB_SERVICE_KEYTAB_FILE} hdfs/hadoop@${KRB_DEFAULT_REALM}
 
-function wait_for_namenode {
-    while true; do
-        dockerize -wait tcp://${g_nn_host}:9000 -timeout 2s
-        if [[ $? -eq 0 ]]; then
-            break
-        fi
-    done
-}
-
 function create_dirs {
     local dirs
     local parts
@@ -45,7 +36,7 @@ function create_dirs {
 }
 
 function main {
-    wait_for_namenode
+    my_tcp_wait ${g_nn_host} 9000
     create_dirs
     my_service "register" ${g_service_name}
 }
